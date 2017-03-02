@@ -1,24 +1,8 @@
-//import 'package:event_emitter/event_emitter.dart';
+library command;
 
 import 'event-emitter.dart' show EventEmitter;
+import 'option.dart' show Option;
 
-class Option {
-  String name;
-  String alias;
-  String description;
-  dynamic defaultValue;
-
-  Option(String flags, String description, Function fn, dynamic defaultValue) {
-    flags.split(',').forEach((String str) {
-      String value = name = str.replaceAll(new RegExp(r'-+'), '');
-      if (str.indexOf('--') == 0) {
-        name = value;
-      } else if (str.indexOf('-') == 0) {
-        alias = value;
-      }
-    });
-  }
-}
 
 class SubCommand extends EventEmitter {
   String _alias = '';
