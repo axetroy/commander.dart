@@ -3,4 +3,4 @@ dart:
   # Install the latest stable release
   - stable
 
-script: ./TEST
+script: ./scripts/test
