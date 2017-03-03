@@ -3,7 +3,7 @@
  */
 class EventEmitter {
 
-  Map<String, dynamic> events = new Map();
+  Map<String, List<Function>> events = new Map();
 
   EventEmitter() {
   }
@@ -12,7 +12,7 @@ class EventEmitter {
     final List eventContainer = this.events.putIfAbsent(event, () => new List<Function>());
     eventContainer.add(handler);
     final Function off = this.off;
-    final Function offThisListener = (){
+    final Function offThisListener = () {
       off(event);
     };
     return offThisListener;
@@ -30,9 +30,9 @@ class EventEmitter {
     events.remove(event);
   }
 
-  void emit(String event, dynamic data) {
+  void emit(String event, [dynamic data]) {
     final List eventContainer = events[event] ?? [];
-    eventContainer.forEach((handler) {
+    eventContainer.forEach((Function handler) {
       if (handler is Function) handler();
     });
   }

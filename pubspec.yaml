@@ -5,11 +5,5 @@ author:
   - axetroy <troy450409405@gmail.com>
 homepage: https://github.com/axetroy/command
 
-environment:
-  sdk: '>=1.0.0 <2.0.0'
-
-dependencies:
-  event_emitter:
-
 dev_dependencies:
-  test: '>=0.12.0 <0.13.0'
+  test:
