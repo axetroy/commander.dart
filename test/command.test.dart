@@ -91,4 +91,41 @@ void main() {
     // [-d] and [--abc] was not defined in program, it should be ignore
     program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
   });
+
+  test('define a cli app without any command, and it will trigger global action', () {
+    bool hasInvokeDefaultAction = false;
+    program
+        .action((Map argv, Map options) {
+      hasInvokeDefaultAction = true;
+      expect(program.subCommands.keys, hasLength(0));
+    });
+
+    // [-d] and [--abc] was not defined in program, it should be ignore
+    program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
+    expect(hasInvokeDefaultAction, isTrue);
+  });
+
+  test('define multiple command', () {
+    bool hasInvokeListCommand = false;
+    program
+        .command('add <target>', 'add a target')
+        .option('-a, -all', 'display all you can see')
+        .action((Map argv, Map options) {
+      expect(options.keys, hasLength(1));
+      expect(options, containsPair('all', true));
+    });
+
+    program
+      .command('list', 'display all item')
+      .action((Map argv, Map options){
+      hasInvokeListCommand = true;
+    });
+
+    // [-d] and [--abc] was not defined in program, it should be ignore
+    program.parseArgv(['list', '-a', '-d', '--abc']);
+
+    expect(hasInvokeListCommand, isTrue);
+    expect(program.subCommands.keys, hasLength(2));
+  });
+
 }
