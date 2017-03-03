@@ -10,7 +10,8 @@ class EventEmitter {
     eventContainer.add(handler);
     final Function off = this.off;
     final Function offThisListener = () {
-      off(event);
+      eventContainer.remove(handler);
+//      off(event);
     };
     return offThisListener;
   }
