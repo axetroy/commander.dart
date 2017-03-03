@@ -1,6 +1,3 @@
-/**
- * Created by axetroy on 2017/3/2.
- */
 class EventEmitter {
 
   Map<String, List<Function>> events = new Map();
