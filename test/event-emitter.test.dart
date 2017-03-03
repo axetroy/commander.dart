@@ -67,4 +67,5 @@ void main() {
     emitter.emit('demo');
     expect(firedTimes, equals(1));
   });
+
 }
