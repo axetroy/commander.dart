@@ -1,5 +1,5 @@
 # command
-[![Build Status](https://travis-ci.org/axetroy/command.svg?branch=master)](https://travis-ci.org/axetroy/command)
+[![Build Status](https://travis-ci.org/axetroy/commander.dart.svg?branch=master)](https://travis-ci.org/axetroy/commander.dart)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Dart](https://img.shields.io/badge/dart-%3E=1.20.0-blue.svg?style=flat-square)
 
@@ -20,10 +20,10 @@ The complete solution for Dart command-line interfaces, inspired by node [comman
 ```dart
 #!/usr/bin/env dart
 
-import 'package:command/command.dart' show Command;
+import 'package:command/commander.dart' show Commander;
 
 void main(List<String> arguments){
-  Command program = new Command();
+  Command program = new Commander();
   
   program
     ..name('test')
@@ -54,14 +54,14 @@ void main(List<String> arguments){
 ## Contribute
 
 ```bash
-git clone https://github.com/axetroy/command.git
-cd ./command
+git clone https://github.com/axetroy/commander.dart.git
+cd ./commander.dart
 pub get
 ./scripts/test
 ```
 
-You can flow [Contribute Guide](https://github.com/axetroy/command/blob/master/contributing.md)
+You can flow [Contribute Guide](https://github.com/axetroy/commander.dart/blob/master/contributing.md)
 
 ## License
 
-The [MIT License](https://github.com/axetroy/command/blob/master/LICENSE)
+The [MIT License](https://github.com/axetroy/commander.dart/blob/master/LICENSE)

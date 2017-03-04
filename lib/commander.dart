@@ -3,7 +3,7 @@ library command;
 import 'event-emitter.dart' show EventEmitter;
 import 'option.dart' show Option;
 
-class Command extends EventEmitter {
+class Commander extends EventEmitter {
   String $name = '';
   String $version = '';
   String $description = '';
@@ -12,14 +12,14 @@ class Command extends EventEmitter {
   List<Option> options = [];
   List<String> argv;
   List<Map> _argv = [];
-  Map<String, Command> subCommands = new Map();
+  Map<String, Commander> subCommands = new Map();
   bool root = true;
-  Command parent;
+  Commander parent;
 
   Map<String, String> $option = new Map();
   Map<String, String> $argv = new Map();
 
-  Command([String name]) {
+  Commander([String name]) {
     $name = name ?? '';
     this.option('-V, --version', 'print the current version');
     this.option('-h, --help', 'print the help info about ${$name}');
@@ -51,12 +51,12 @@ class Command extends EventEmitter {
     return this;
   }
 
-  Command command(String name, [String description, Map<String, dynamic> options]) {
+  Commander command(String name, [String description, Map<String, dynamic> options]) {
     List<String> commands = name.split(new RegExp(r'\s+')).toList();
     String command = commands.removeAt(0);
     argv = commands;
 
-    Command subCommand = new Command(command);
+    Commander subCommand = new Commander(command);
     subCommand.root = false;
 
     subCommand
@@ -68,7 +68,7 @@ class Command extends EventEmitter {
     return subCommand;
   }
 
-  Command parseExpectedArgs(List<String> args) {
+  Commander parseExpectedArgs(List<String> args) {
     if (args.length == 0) return this;
     int index = 0;
     args.forEach((arg) {
@@ -103,7 +103,7 @@ class Command extends EventEmitter {
     return this;
   }
 
-  Command action(Function handler) {
+  Commander action(Function handler) {
     this.on($name, () {
       handler($argv, $option);
     });
@@ -130,7 +130,7 @@ class Command extends EventEmitter {
 
     String command = arguments.removeAt(0);
 
-    Command subCommand = subCommands[command];
+    Commander subCommand = subCommands[command];
 
     if (subCommand == null) {
 //      print('did not found any command and emite the own action');
@@ -142,7 +142,7 @@ class Command extends EventEmitter {
   }
 
   void help() {
-    String commands = subCommands.values.map((Command command) {
+    String commands = subCommands.values.map((Commander command) {
       return '   ${command.$name}    ${command.$description}';
     })
       .join('\n');

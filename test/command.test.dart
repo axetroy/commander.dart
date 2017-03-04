@@ -1,12 +1,12 @@
-import 'package:command/command.dart' show Command;
+import 'package:command/commander.dart' show Commander;
 import 'package:command/option.dart' show Option;
 import 'package:test/test.dart';
 
 void main() {
-  Command program = new Command();
+  Commander program = new Commander();
 
   setUp(() async {
-    program = new Command();
+    program = new Commander();
 
     program
       ..name('test')
@@ -122,7 +122,7 @@ void main() {
         .command('add <target>', 'add a target');
 
       expect(program.subCommands is Map, equals(true));
-      expect(program.subCommands["add"] is Command, equals(true));
+      expect(program.subCommands["add"] is Commander, equals(true));
     });
 
     test('add a global command and action', () {
