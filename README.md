@@ -20,7 +20,7 @@ The complete solution for Dart command-line interfaces, inspired by node [comman
 ```dart
 #!/usr/bin/env dart
 
-import 'package:commander/commander.dart' show Commander;
+import 'package:escli/escli.dart' show Commander;
 
 void main(List<String> arguments){
   Commander program = new Commander();
