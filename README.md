@@ -1,4 +1,4 @@
-# command
+# commander.dart
 [![Build Status](https://travis-ci.org/axetroy/commander.dart.svg?branch=master)](https://travis-ci.org/axetroy/commander.dart)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Dart](https://img.shields.io/badge/dart-%3E=1.20.0-blue.svg?style=flat-square)
@@ -20,10 +20,10 @@ The complete solution for Dart command-line interfaces, inspired by node [comman
 ```dart
 #!/usr/bin/env dart
 
-import 'package:command/commander.dart' show Commander;
+import 'package:commander/commander.dart' show Commander;
 
 void main(List<String> arguments){
-  Command program = new Commander();
+  Commander program = new Commander();
   
   program
     ..name('test')
