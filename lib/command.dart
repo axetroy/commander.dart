@@ -5,8 +5,10 @@ import 'option.dart' show Option;
 
 class Command extends EventEmitter {
   String $name = '';
+  String $version = '';
   String $description = '';
   String $usage = '';
+
   List<Option> options = [];
   List<String> argv;
   List<Map> _argv = [];
@@ -14,8 +16,8 @@ class Command extends EventEmitter {
   bool root = true;
   Command parent;
 
-  Map actionArgv = {};
-  Map actionOptions = {};
+  Map<String, String> $option = new Map();
+  Map<String, String> $argv = new Map();
 
   Command([String name]) {
     $name = name ?? '';
@@ -25,6 +27,11 @@ class Command extends EventEmitter {
 
   name(String name) {
     $name = name;
+    return this;
+  }
+
+  version(String version) {
+    $version = version;
     return this;
   }
 
@@ -98,7 +105,7 @@ class Command extends EventEmitter {
 
   Command action(Function handler) {
     this.on($name, () {
-      handler(actionArgv, actionOptions);
+      handler($argv, $option);
     });
     return this;
   }
@@ -106,18 +113,19 @@ class Command extends EventEmitter {
   void parseArgv(List<String> arguments) {
     arguments = arguments.toList();
 
-    Map optionsResult = new Map();
-    Map argvResult = new Map();
+    $option = new Map();
+    $argv = new Map();
 
     //  parse options and set the value
     options.forEach((Option option) {
-      optionsResult.addAll(option.parseArgv(arguments));
+      option.parseArgv(arguments);
+      $option[option.key] = option.value;
     });
 
     // parse argv and set the value
     _argv.forEach((Map argv) {
       final current = arguments[argv["index"]];
-      argvResult[argv["name"]] = current.indexOf('-') == 0 ? '' : current;
+      $argv[argv["name"]] = current.indexOf('-') == 0 ? '' : current;
     });
 
     String command = arguments.removeAt(0);
@@ -126,8 +134,6 @@ class Command extends EventEmitter {
 
     if (subCommand == null) {
 //      print('did not found any command and emite the own action');
-      actionArgv = argvResult;
-      actionOptions = optionsResult;
       this.emit($name);
     }
     else {

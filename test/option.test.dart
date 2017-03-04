@@ -21,17 +21,16 @@ void main() {
       expect(option.argv, isEmpty);
       expect(option.value, isFalse);
 
-      Map result1 = option.parseArgv(['-f', 'aaa']);
-      expect(result1, containsPair('force', true));
+      option.parseArgv(['-f', 'aaa']);
+      expect(option.value, isTrue);
 
       // duplicate define
-      Map result2 = option.parseArgv(['-f', 'aaa', '--force']);
-      expect(result2, containsPair('force', true));
+      option.parseArgv(['-f', 'aaa', '--force']);
+      expect(option.value, isTrue);
 
       // input a flag witch was not defined, and it should not be contains
-      Map result3 = option.parseArgv(['-f', 'aaa', '--aabbcc']);
-      expect(result3, containsPair('force', true));
-      expect(result3.containsKey('aabbcc'), isFalse);
+      option.parseArgv(['-f', 'aaa', '--aabbcc']);
+      expect(option.value, isTrue);
     });
 
     test('single flag', () {
@@ -60,18 +59,17 @@ void main() {
       expect(option.optional, isFalse);
       expect(option.anti, isFalse);
 
-      Map result1 = option.parseArgv(['--to', '/home/axetroy']);
-      expect(result1.containsKey('f'), isFalse);
-      expect(result1.keys, hasLength(1));
-      expect(result1, containsPair('to', '/home/axetroy'));
+      option.parseArgv(['--to', '/home/axetroy']);
+      expect(option.key, equals('to'));
+      expect(option.value, equals('/home/axetroy'));
 
-//       empty value
-      Map result2 = option.parseArgv(['--to', '']);
-      expect(result2, containsPair('to', ''));
+      //  empty value
+      option.parseArgv(['--to', '']);
+      expect(option.value, equals(''));
 
       // mssing value
-      Map result3 = option.parseArgv(['--to']);
-      expect(result3, containsPair('to', ''));
+      option.parseArgv(['--to']);
+      expect(option.value, equals(''));
     });
   }, skip: false);
 

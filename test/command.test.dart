@@ -10,6 +10,7 @@ void main() {
 
     program
       ..name('test')
+      ..version('1.2.0')
       ..description('test desc')
       ..usage('<command> [options]');
   });
@@ -17,6 +18,7 @@ void main() {
   group('basic info', () {
     test('test program info', () {
       expect(program.$name, equals('test'));
+      expect(program.$version, equals('1.2.0'));
       expect(program.$description, equals('test desc'));
       expect(program.$usage, equals('<command> [options]'));
       expect(program.subCommands.length, equals(0));
@@ -47,6 +49,21 @@ void main() {
       expect(program.options.length, equals(3));
     }, skip: false);
 
+    test('add multiple options', () {
+      expect(program.options.length, equals(2));
+      program
+        .option('-p, --peppers', 'Add peppers')
+        .option('-P, --pineapple', 'Add pineapple')
+        .option('-b, --bbq-sauce', 'Add bbq sauce')
+        .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
+
+      expect(program.options, hasLength(6));
+      program.parseArgv(['--peppers', '--pineapple']);
+      expect(program.subCommands, hasLength(0));
+      expect(program.$option, containsPair('peppers', true));
+      expect(program.$option, containsPair('pineapple', true));
+    }, skip: false);
+
     test('add a command optoins', () {
       program
         .command('add <target>', 'add a target')
@@ -64,13 +81,14 @@ void main() {
         .command('add <target>', 'add a target')
         .option('-a, -all', 'display all you can see')
         .action((Map argv, Map options) {
-        expect(options.keys, hasLength(1));
+        expect(options.keys, hasLength(3));
+        expect(program.subCommands, hasLength(1));
         expect(options, containsPair('all', true));
       });
 
       // [-d] and [--abc] was not defined in program, it should be ignore
       program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
-    });
+    }, skip: false);
 
     test('define a cli app without any command, and it will trigger global action', () {
       bool hasInvokeDefaultAction = false;

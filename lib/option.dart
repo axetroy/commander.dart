@@ -1,4 +1,4 @@
-class Option {
+class Option{
   String flags;
   String long;
   String short;
@@ -45,8 +45,7 @@ class Option {
   /**
    * 把字符串，根据这个option，生成字段
    */
-  Map<String, String> parseArgv(List<String> _arguments) {
-    final Map<String, dynamic> output = new Map();
+  dynamic parseArgv(List<String> _arguments) {
     List<String> arguments = _arguments.toList();
     while (arguments.length != 0) {
       String arv = arguments.removeAt(0);
@@ -55,46 +54,26 @@ class Option {
         if (value is! bool) {
           // if loop to last element, then set the value to empty string
           if (arguments.isEmpty || arguments.last == arv) {
-            output[key] = '';
+            value = defaultValue ?? '';
           }
           else {
-            output[key] = arguments.removeAt(0);
+            value = arguments.removeAt(0);
           }
         }
         // it just a flag, true or false
         else {
-          output[key] = true;
+          value = true;
         }
       };
     }
-
-/*    arguments
-        .where((String v) => v == short || v == long)
-        .forEach((arv) {
-      // not just a flag, need to set a value
-      if (value is! bool) {
-        // if loop to last element, then set the value to empty string
-        if (index > arguments.length - 1) {
-          output[key] = '';
-          return;
-        };
-        final String nextArv = arguments[index + 1];
-        output[key] = nextArv;
-      }
-      // it just a flag, true or false
-      else {
-        output[key] = true;
-      }
-      index++;
-    });*/
-    return output;
+    return value;
   }
 }
 
 String camelcase(String flag) {
   return flag.split('-')
-      .where((str) => str.isNotEmpty)
-      .reduce((str, String word) {
+    .where((str) => str.isNotEmpty)
+    .reduce((str, String word) {
     List<String> wordList = word.split('').toList();
     wordList = wordList.isEmpty ? [''] : wordList;
     return str + wordList.removeAt(0).toUpperCase() + wordList.join('');
