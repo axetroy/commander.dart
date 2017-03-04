@@ -157,11 +157,11 @@ void main() {
     test('add a options handler and it will trigger spead the value', () {
       bool hasTriggerOptionHandler = false;
       program
-        .option('-all, --display-all', 'force run this command', handler: ([bool displayAll]) {
+        .option('-all, --display-all', 'force run this command', ([bool displayAll]) {
         expect(displayAll, true);
         hasTriggerOptionHandler = true;
       })
-        .option('-t, --to <target>', 'force run this command', handler: ([String target]) {
+        .option('-t, --to <target>', 'force run this command', ([String target]) {
         expect(target, equals('/home/axetroy'));
         hasTriggerOptionHandler = true;
       });
