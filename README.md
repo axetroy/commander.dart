@@ -42,14 +42,14 @@ void main(List<String> arguments){
   Commander program = new Commander();
   
   program
-    .name('test')
-    .version('1.2.0')
-    .description('test desc')
-    .usage('<command> [options]')
-    .option('-p, --peppers', 'Add peppers')
-    .option('-P, --pineapple', 'Add pineapple')
-    .option('-b, --bbq-sauce', 'Add bbq sauce')
-    .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
+    ..name('test')
+    ..version('1.2.0')
+    ..description('test desc')
+    ..usage('<command> [options]')
+    ..option('-p, --peppers', 'Add peppers')
+    ..option('-P, --pineapple', 'Add pineapple')
+    ..option('-b, --bbq-sauce', 'Add bbq sauce')
+    ..option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
   
   program.parseArgv(arguments);
   
@@ -62,6 +62,51 @@ void main(List<String> arguments){
 }
 ```
 
+### Coercion
+
+```dart
+import 'package:escli/escli.dart' show Commander;
+void main(List<String> arguments) {
+  Commander program = new Commander();
+
+  parseInt(int n){
+    print('--interger: $n');
+  }
+  parseFlow(num n){
+    print('--float: $n');
+  }
+  range(val) {
+    print('--float: $val');
+  }
+
+  list(val) {
+    print('--list: $val');
+  }
+
+  collect(val) {
+    print('--optional: $val');
+  }
+
+  increaseVerbosity(val) {
+    print('--verbose: $val');
+  }
+
+  program
+    ..name('test')
+    ..version('1.2.0')
+    ..description('test desc')
+    ..usage('<command> [options]')
+    ..option('-i, --integer <n>', 'An integer argument', parseInt)
+    ..option('-f, --float <n>', 'A float argument', parseFlow)
+    ..option('-r, --range <a>..<b>', 'A range', range)
+    ..option('-l, --list <items>', 'A list', list)
+    ..option('-o, --optional [value]', 'An optional value')
+    ..option('-c, --collect [value]', 'A repeatable value', collect)
+    ..option('-v, --verbose', 'A value that can be increased', increaseVerbosity, 0)
+    ..parseArgv(arguments);
+}
+```
+
 ###  Specify the argument syntax
 
 ```dart
@@ -71,9 +116,9 @@ void main(List<String> arguments){
   Commander program = new Commander();
 
   program
-    .version('0.0.1')
-    .arguments('<cmd> [env]')
-    .action((Map argv, Map options) {
+    ..version('0.0.1')
+    ..arguments('<cmd> [env]')
+    ..action((Map argv, Map options) {
     print(argv);
     print(options);
   });
@@ -91,7 +136,7 @@ void main(List<String> arguments) {
   Commander program = new Commander();
 
   program
-    .version('0.0.1');
+    ..version('0.0.1');
 
   program
     .command('install [name]', 'install one or more packages')
