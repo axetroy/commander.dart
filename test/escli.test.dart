@@ -153,6 +153,22 @@ void main() {
       program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
       expect(hasInvokeDefaultAction, isTrue);
     }, skip: false);
+
+    test('add a options handler and it will trigger spead the value', () {
+      bool hasTriggerOptionHandler = false;
+      program
+        .option('-all, --display-all', 'force run this command', handler: ([bool displayAll]) {
+        expect(displayAll, true);
+        hasTriggerOptionHandler = true;
+      })
+        .option('-t, --to <target>', 'force run this command', handler: ([String target]) {
+        expect(target, equals('/home/axetroy'));
+        hasTriggerOptionHandler = true;
+      });
+      expect(hasTriggerOptionHandler, isFalse);
+      program.parseArgv(['-all', '--a', '--bb', '-t', '/home/axetroy']);
+      expect(hasTriggerOptionHandler, isTrue);
+    }, skip: false);
   }, skip: false);
 
   group('command', () {
