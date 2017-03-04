@@ -10,6 +10,7 @@ class Option extends EventEmitter {
 
   bool required = false;
   bool optional = true;
+  bool requireValue = false;
   bool anti = false;
 
   List<Map> argv = [];
@@ -24,26 +25,28 @@ class Option extends EventEmitter {
     description = _description;
     required = flags.indexOf('<') >= 0;
     optional = flags.indexOf('[') >= 0;
+    requireValue = required || optional;
     anti = flags.indexOf('-no-') >= 0;
-
     defaultValue = $defaultValue ?? null;
-
-    if (required || optional) {
-      value = '';
-    }
 
     List flagsList = flags.split(new RegExp(r'[ ,|]+'));
 
-    if (flagsList.length > 1) {
-      short = flagsList.removeAt(0);
-    }
+    if (flagsList.length > 1) short = flagsList.removeAt(0);
 
     long = flagsList.removeAt(0);
     key = camelcase(long);
 
+    if (requireValue) value = $defaultValue ?? '';
+
     this.on('run_handler', (data) {
       if (handler is Function) {
-        handler(data);
+        // if the options like this:
+        // options: --from <dir>
+        // arguments: --from --to etc...
+        // you can see that, from don't have value, then it should not be trigger
+        if ((requireValue && value != null && value != '') || requireValue == false) {
+          handler(data);
+        }
       }
     });
   }
