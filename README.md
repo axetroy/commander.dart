@@ -30,10 +30,10 @@ void main(List<String> arguments){
     ..version('1.2.0')
     ..description('test desc')
     ..usage('<command> [options]')
-    .option('-p, --peppers', 'Add peppers')
-    .option('-P, --pineapple', 'Add pineapple')
-    .option('-b, --bbq-sauce', 'Add bbq sauce')
-    .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
+    ..option('-p, --peppers', 'Add peppers')
+    ..option('-P, --pineapple', 'Add pineapple')
+    ..option('-b, --bbq-sauce', 'Add bbq sauce')
+    ..option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
   
   program.parseArgv(arguments);
   
