@@ -8,10 +8,8 @@ class EventEmitter {
   Function on(String event, Function handler) {
     final List eventContainer = this.events.putIfAbsent(event, () => new List<Function>());
     eventContainer.add(handler);
-    final Function off = this.off;
     final Function offThisListener = () {
       eventContainer.remove(handler);
-//      off(event);
     };
     return offThisListener;
   }

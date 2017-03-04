@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:commander/commander.dart' show Commander;
 import 'package:commander/option.dart' show Option, camelcase;
 
 void main() {
