@@ -17,12 +17,17 @@ class Option {
 
   dynamic defaultValue;
 
-  Option(String _flags, String _description, [Function fn, dynamic defaultValue]) {
+  Function handler;
+
+  Option(String _flags, String _description, {void $handler([dynamic data]), dynamic $defaultValue}) {
     flags = _flags;
     description = _description;
     required = flags.indexOf('<') >= 0;
     optional = flags.indexOf('[') >= 0;
     anti = flags.indexOf('-no-') >= 0;
+
+    handler = $handler ?? ([dynamic data]) {};
+    defaultValue = $defaultValue ?? null;
 
     if (required || optional) {
       value = '';

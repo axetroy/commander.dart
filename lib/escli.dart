@@ -65,8 +65,8 @@ class Commander extends EventEmitter {
     return this;
   }
 
-  option(String flags, String description, [Function fn, dynamic defaultValue]) {
-    final option = new Option(flags, description, fn, defaultValue);
+  option(String flags, String description, {void handler([dynamic data]), dynamic defaultValue}) {
+    final option = new Option(flags, description, $handler: handler, $defaultValue: defaultValue);
     options.add(option);
     return this;
   }
@@ -138,6 +138,7 @@ class Commander extends EventEmitter {
     options.forEach((Option option) {
       option.parseArgv(arguments);
       $option[option.key] = option.value;
+      option.handler(option.value);
     });
 
     // parse argv and set the value
