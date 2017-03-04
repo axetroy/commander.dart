@@ -5,5 +5,8 @@ author:
   - axetroy <troy450409405@gmail.com>
 homepage: https://github.com/axetroy/command
 
+dependencies:
+  ee:
+
 dev_dependencies:
   test:

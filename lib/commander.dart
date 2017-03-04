@@ -1,6 +1,6 @@
 library commander;
 
-import 'event-emitter.dart' show EventEmitter;
+import 'package:ee/ee.dart' show EventEmitter;
 import 'option.dart' show Option;
 
 class Commander extends EventEmitter {
@@ -104,7 +104,7 @@ class Commander extends EventEmitter {
   }
 
   Commander action(Function handler) {
-    this.on($name, () {
+    this.on($name, (dynamic data) {
       handler($argv, $option);
     });
     return this;
