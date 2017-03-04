@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Dart](https://img.shields.io/badge/dart-%3E=1.20.0-blue.svg?style=flat-square)
 
-The complete solution for Dart command-line interfaces, inspired by node [command](https://github.com/tj/commander.js) witch created by tj.
+The complete solution for Dart command-line interfaces, inspired by node [commander](https://github.com/tj/commander.js) witch created by tj.
 
 ## Requirement
 
