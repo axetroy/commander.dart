@@ -35,13 +35,14 @@ class Commander extends EventEmitter {
   bool root = true;
   Commander parent;
 
-  Map<String, String> $option = new Map();
+  Map<String, dynamic> $option = new Map();
   Map<String, String> $argv = new Map();
 
   Commander([String name]) {
     $name = name ?? '';
     this.option('-V, --version', 'print the current version');
     this.option('-h, --help', 'print the help info about ${$name}');
+    this.option('-dev, --development', 'dart environment variables');
   }
 
   name(String name) {
@@ -122,10 +123,8 @@ class Commander extends EventEmitter {
     return this;
   }
 
-  Commander action(Function handler) {
-    this.on($name, (dynamic data) {
-      handler($argv, $option);
-    });
+  Commander action(void handler(Map argv, Map option)) {
+    this.on($name, (dynamic data) => handler($argv, $option));
     return this;
   }
 
@@ -152,8 +151,13 @@ class Commander extends EventEmitter {
     Commander subCommand = subCommands[command];
 
     if (subCommand == null) {
-//      print('did not found any command and emite the own action');
-      this.emit($name);
+      // not root command
+      bool isDev = $option["development"];
+      if (command.isNotEmpty && command.indexOf('-') != 0 && isDev == true) {
+        print('can\' found $command, please run ${$name} --help to get help infomation');
+      } else {
+        this.emit($name);
+      }
     }
     else {
       subCommand.parseArgv(arguments);

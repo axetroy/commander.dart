@@ -9,13 +9,13 @@ void main() {
     program = new Commander();
 
     program
-      ..name('test')
+      ..name('escli')
       ..version('1.2.0')
       ..description('test desc')
       ..usage('<command> [options]');
   });
 
-  group('basic info', () {
+  group('basic', () {
     test('test program info', () {
       expect(program.$name, equals('test'));
       expect(program.$version, equals('1.2.0'));
@@ -31,11 +31,45 @@ void main() {
       expect(program.options.length, equals(2));
       expect(helper.length, equals(1));
       expect(helper[0], equals('--help'));
-    });
+    }, skip: true);
+
+    test('if not define any action, should run global action', () {
+      bool hasRunDefaultAction = false;
+      program
+        .action((argv, option) {
+        hasRunDefaultAction = true;
+      });
+
+      program.parseArgv(['--cheese', '--pineapple']);
+
+      expect(hasRunDefaultAction, isTrue);
+    }, skip: false);
+
+    test('if i run a invalid command', () {
+      bool hasRunDefaultAction = false;
+      bool hasRunCommandAction = false;
+      program
+        .action((argv, option) {
+        // it won't run this forever, cause
+        hasRunDefaultAction = true;
+      });
+
+      program
+        .command('test command')
+        .action((argv, option) {
+        // it won't run this forever, cause
+        hasRunCommandAction = true;
+      });
+
+      program.parseArgv(['invalid_command', '--cheese', '--pineapple', '-dev']);
+
+      expect(hasRunDefaultAction, isFalse);
+      expect(hasRunCommandAction, isFalse);
+    }, skip: false);
   }, skip: false);
 
 
-  group('test options', () {
+  group('options', () {
     test('add a global options', () {
       expect(program.options.length, equals(2));
       program
@@ -47,7 +81,7 @@ void main() {
         .toList();
       expect(force[0], equals('--force'));
       expect(program.options.length, equals(3));
-    }, skip: false);
+    }, skip: true);
 
     test('add multiple options', () {
       expect(program.options.length, equals(2));
@@ -62,7 +96,7 @@ void main() {
       expect(program.subCommands, hasLength(0));
       expect(program.$option, containsPair('peppers', true));
       expect(program.$option, containsPair('pineapple', true));
-    }, skip: false);
+    }, skip: true);
 
     test('multiple options need set value but some it did not set', () {
       expect(program.options.length, equals(2));
@@ -71,10 +105,11 @@ void main() {
         .option('-P, --pineapple', 'Add pineapple')
         .option('-b, --bbq-sauce', 'Add bbq sauce')
         .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
-      program.parseArgv(['--cheese', '--pineapple']);   // missing value it should be ['--cheese', '[value]', '--pineapple']
+      program.parseArgv(
+        ['--cheese', '--pineapple']); // missing value it should be ['--cheese', '[value]', '--pineapple']
       expect(program.$option, containsPair('pineapple', true));
-      expect(program.$option, containsPair('cheese', ''));    // should can't get any value, it's empty
-    }, skip: false);
+      expect(program.$option, containsPair('cheese', '')); // should can't get any value, it's empty
+    }, skip: true);
 
     test('add a command optoins', () {
       program
@@ -86,7 +121,7 @@ void main() {
       });
 
       program.parseArgv(['add', '~/home', '-a']);
-    }, skip: false);
+    }, skip: true);
 
     test('if input invalid command optoins, it should be ignore', () {
       program
@@ -100,7 +135,7 @@ void main() {
 
       // [-d] and [--abc] was not defined in program, it should be ignore
       program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
-    }, skip: false);
+    }, skip: true);
 
     test('define a cli app without any command, and it will trigger global action', () {
       bool hasInvokeDefaultAction = false;
@@ -113,10 +148,10 @@ void main() {
       // [-d] and [--abc] was not defined in program, it should be ignore
       program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
       expect(hasInvokeDefaultAction, isTrue);
-    }, skip: false);
-  }, skip: false);
+    }, skip: true);
+  }, skip: true);
 
-  group('test command', () {
+  group('command', () {
     test('add a global command', () {
       program
         .command('add <target>', 'add a target');
@@ -163,5 +198,5 @@ void main() {
       expect(hasInvokeListCommand, isTrue);
       expect(program.subCommands.keys, hasLength(2));
     });
-  }, skip: false);
+  }, skip: true);
 }
