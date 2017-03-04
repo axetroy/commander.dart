@@ -45,9 +45,9 @@ class Option {
   /**
    * 把字符串，根据这个option，生成字段
    */
-  Map<String, String> parseArgv(List<String> arguments) {
+  Map<String, String> parseArgv(List<String> _arguments) {
     final Map<String, dynamic> output = new Map();
-
+    List<String> arguments = _arguments.toList();
     while (arguments.length != 0) {
       String arv = arguments.removeAt(0);
       if ((arv == short || arv == long) && arv.isNotEmpty) {
