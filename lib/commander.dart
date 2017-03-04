@@ -1,4 +1,4 @@
-library command;
+library commander;
 
 import 'event-emitter.dart' show EventEmitter;
 import 'option.dart' show Option;

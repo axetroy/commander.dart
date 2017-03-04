@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:command/event-emitter.dart' show EventEmitter;
+import 'package:commander/event-emitter.dart' show EventEmitter;
 
 void main() {
   EventEmitter emitter;

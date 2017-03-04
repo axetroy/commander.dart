@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import '../lib/commander.dart' show Command;
-import 'package:command/option.dart' show Option, camelcase;
+import 'package:commander/commander.dart' show Commander;
+import 'package:commander/option.dart' show Option, camelcase;
 
 void main() {
   Option option;
