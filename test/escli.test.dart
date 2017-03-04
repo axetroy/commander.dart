@@ -1,5 +1,5 @@
-import 'package:commander/commander.dart' show Commander;
-import 'package:commander/option.dart' show Option;
+import 'package:escli/escli.dart' show Commander;
+import 'package:escli/option.dart' show Option;
 import 'package:test/test.dart';
 
 void main() {

@@ -1,4 +1,4 @@
-library commander;
+library escli;
 
 import 'package:ee/ee.dart' show EventEmitter;
 import 'option.dart' show Option;
