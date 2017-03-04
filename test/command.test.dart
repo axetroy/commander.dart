@@ -1,5 +1,5 @@
-import '../lib/command.dart' show Command;
-import '../lib/option.dart' show Option;
+import 'package:command/command.dart' show Command;
+import 'package:command/option.dart' show Option;
 import 'package:test/test.dart';
 
 void main() {
