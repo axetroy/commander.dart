@@ -137,6 +137,13 @@ class Commander extends EventEmitter {
     //  parse options and set the value
     options.forEach((Option option) {
       option.parseArgv(arguments);
+      // validate the options filed
+      // if this options is required, but not set this value, and not found default value. it will throw an error
+      if (option.haveSetFlag && option.required && option.value == '') {
+        throw new Exception(
+          '${option.long} <value> is required field, or you can set it to optional ${option.long} [value]'
+        );
+      }
       $option[option.key] = option.value;
       option.emit('run_handler', option.value);
     });

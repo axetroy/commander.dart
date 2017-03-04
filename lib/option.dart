@@ -11,6 +11,7 @@ class Option extends EventEmitter {
   bool required = false;
   bool optional = true;
   bool requireValue = false;
+  bool haveSetFlag = false;
   bool anti = false;
 
   List<Map> argv = [];
@@ -44,7 +45,7 @@ class Option extends EventEmitter {
         // options: --from <dir>
         // arguments: --from --to etc...
         // you can see that, from don't have value, then it should not be trigger
-        if ((requireValue && value != null && value != '') || requireValue == false) {
+        if ((requireValue == true && value != null && value != '') || requireValue == false) {
           handler(data);
         }
       }
@@ -63,6 +64,7 @@ class Option extends EventEmitter {
     while (arguments.length != 0) {
       String arv = arguments.removeAt(0);
       if ((arv == short || arv == long) && arv.isNotEmpty) {
+        haveSetFlag = true;
         // not just a flag, need to set a value
         if (value is! bool) {
           // if loop to last element, then set the value to empty string
