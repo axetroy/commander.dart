@@ -9,9 +9,9 @@ The complete solution for Dart command-line interfaces, inspired by node [comman
 
 cause I don't like build the cli app with other exist lib.
 
-those api not graceful enough. so I want build a lib use like commander.js
+those api are not graceful enough. so I want build a lib use like commander.js
 
-so, you can move cli tool from Nodejs easier.
+it make you move cli tool from Nodejs easier.
 
 remember, This lib in developing. 
 
