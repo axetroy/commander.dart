@@ -1,9 +1,11 @@
 library escli;
 
+import 'dart:io';
 import 'package:ee/ee.dart' show EventEmitter;
 import 'option.dart' show Option;
 
 num _max(List<num> numList) {
+  if (numList.length == 0) return 0;
   num output = numList[0];
   numList.forEach((num num) {
     if (num > output) {
@@ -43,6 +45,18 @@ class Commander extends EventEmitter {
     this.option('-V, --version', 'print the current version');
     this.option('-h, --help', 'print the help info about ${$name}');
     this.option('-dev, --development', 'dart environment variables');
+    this.on('version', (version) {
+      stdout.write(version);
+      exit(1);
+    });
+    this.on('help', (version) {
+      this.help();
+      exit(1);
+    });
+    this.on('dev', (version) {
+      stdout.write('env');
+      exit(1);
+    });
   }
 
   name(String name) {
@@ -148,6 +162,17 @@ class Commander extends EventEmitter {
       option.emit('run_handler', option.value);
     });
 
+    if ($option["version"]) {
+      this.emit('version', $version);
+    }
+
+    if ($option["help"]) {
+      this.emit('help', null);
+    }
+    else if ($option["version"]) {
+      this.emit('version', $version);
+    }
+
     // parse argv and set the value
     _argv.forEach((Map argv) {
       final current = arguments[argv["index"]];
@@ -162,7 +187,7 @@ class Commander extends EventEmitter {
       // not root command
       bool isDev = $option["development"];
       if (command.isNotEmpty && command.indexOf('-') != 0 && isDev == true) {
-        print('can\' found $command, please run ${$name} --help to get help infomation');
+        stderr.write('can\' found $command, please run ${$name} --help to get help infomation');
       } else {
         this.emit($name);
       }
@@ -177,23 +202,27 @@ class Commander extends EventEmitter {
     num maxCommandLength = _max(subCommands.values.map((Commander command) => command.$name.length).toList());
 
     String commands = subCommands.values.map((Commander command) {
-      return '   ${command.$name} ${_repeat(' ', maxCommandLength - command.$name.length + 4)} ${command.$description}';
+      return '    ${command.$name} ${_repeat(' ', maxCommandLength - command.$name.length + 4)} ${command.$description}';
     }).join('\n');
 
     String optionsStr = options.map((Option op) {
-      return '    ${op.flags} ${_repeat(' ', maxOptionLength - op.flags.length + 4)} ${op.description}';
+      String margin = _repeat(' ', maxOptionLength - op.flags.length + 4);
+      return '    ${op.flags} ${margin} ${op.description}';
     }).join('\n');
 
-    print('''
-Usage: ${$name} ${$usage}
+    stdout.write('''
 
-  ${$description}
+  Usage: ${$name} ${$usage}
 
-commands:
-${commands}
+    ${$description}
 
-options:
+  commands:
+${commands.isNotEmpty ? commands : '    can not found a valid command'}
+
+  options:
 ${optionsStr}
+
+Print '${$name} <command> --help for get more infomation'
 ''');
   }
 
