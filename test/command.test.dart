@@ -64,6 +64,18 @@ void main() {
       expect(program.$option, containsPair('pineapple', true));
     }, skip: false);
 
+    test('multiple options need set value but some it did not set', () {
+      expect(program.options.length, equals(2));
+      program
+        .option('-p, --peppers', 'Add peppers')
+        .option('-P, --pineapple', 'Add pineapple')
+        .option('-b, --bbq-sauce', 'Add bbq sauce')
+        .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
+      program.parseArgv(['--cheese', '--pineapple']);   // missing value it should be ['--cheese', '[value]', '--pineapple']
+      expect(program.$option, containsPair('pineapple', true));
+      expect(program.$option, containsPair('cheese', ''));    // should can't get any value, it's empty
+    }, skip: false);
+
     test('add a command optoins', () {
       program
         .command('add <target>', 'add a target')

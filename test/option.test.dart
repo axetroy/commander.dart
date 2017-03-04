@@ -33,7 +33,7 @@ void main() {
       expect(option.value, isTrue);
     });
 
-    test('single flag', () {
+    test('single flag only contain the long field', () {
       option = new Option('--force', 'run command in force mode');
 
       expect(option.short, isNull);
@@ -50,7 +50,7 @@ void main() {
 
   group('value', () {
     test('option as a value', () {
-      option = new Option('-t, --to <div>', 'ouput dir');
+      option = new Option('-t, --to <dir>', 'ouput dir');
 
       expect(option.short, equals('-t'));
       expect(option.long, equals('--to'));

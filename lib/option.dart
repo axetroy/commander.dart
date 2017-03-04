@@ -65,7 +65,7 @@ class Option {
               arguments.insert(0, nextElement);
               value = '';
             } else {
-              value = arguments.removeAt(0);
+              value = nextElement;
             }
           }
         }
