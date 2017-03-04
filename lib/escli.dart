@@ -3,6 +3,25 @@ library escli;
 import 'package:ee/ee.dart' show EventEmitter;
 import 'option.dart' show Option;
 
+num _max(List<num> numList) {
+  num output = numList[0];
+  numList.forEach((num num) {
+    if (num > output) {
+      output = num;
+    }
+  });
+  return output;
+}
+
+String _repeat(String str, int times) {
+  List<String> list = [];
+  while (times != 0) {
+    list.add(str);
+    times--;
+  }
+  return list.join('');
+}
+
 class Commander extends EventEmitter {
   String $name = '';
   String $version = '';
@@ -142,13 +161,15 @@ class Commander extends EventEmitter {
   }
 
   void help() {
+    num maxOptionLength = _max(options.map((Option op) => op.flags.length).toList());
+    num maxCommandLength = _max(subCommands.values.map((Commander command) => command.$name.length).toList());
+
     String commands = subCommands.values.map((Commander command) {
-      return '   ${command.$name}    ${command.$description}';
-    })
-      .join('\n');
+      return '   ${command.$name} ${_repeat(' ', maxCommandLength - command.$name.length + 4)} ${command.$description}';
+    }).join('\n');
 
     String optionsStr = options.map((Option op) {
-      return '    ${op.flags}';
+      return '    ${op.flags} ${_repeat(' ', maxOptionLength - op.flags.length + 4)} ${op.description}';
     }).join('\n');
 
     print('''
