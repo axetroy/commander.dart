@@ -1,4 +1,4 @@
-class Option{
+class Option {
   String flags;
   String long;
   String short;
@@ -56,8 +56,17 @@ class Option{
           if (arguments.isEmpty || arguments.last == arv) {
             value = defaultValue ?? '';
           }
+          // not last in List, next element could be contain the value, or not
           else {
-            value = arguments.removeAt(0);
+            String nextElement = arguments.removeAt(0);
+            // next element still be a flag, example: --help or --force etc...
+            if (new RegExp('^-+').hasMatch(nextElement)) {
+              // recover the element was remove
+              arguments.insert(0, nextElement);
+              value = '';
+            } else {
+              value = arguments.removeAt(0);
+            }
           }
         }
         // it just a flag, true or false
