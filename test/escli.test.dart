@@ -4,23 +4,27 @@ import 'package:test/test.dart';
 
 void main() {
   Commander program = new Commander();
+  String name = 'escli';
+  String version = '1.2.0';
+  String description = 'escli, a lib to build your cli-app';
+  String usage = '<command> [options]';
 
   setUp(() async {
     program = new Commander();
 
     program
-      ..name('escli')
-      ..version('1.2.0')
-      ..description('test desc')
-      ..usage('<command> [options]');
+      .name(name)
+      .version(version)
+      .description(description)
+      .usage(usage);
   });
 
   group('basic', () {
     test('test program info', () {
-      expect(program.$name, equals('test'));
-      expect(program.$version, equals('1.2.0'));
-      expect(program.$description, equals('test desc'));
-      expect(program.$usage, equals('<command> [options]'));
+      expect(program.$name, equals(name));
+      expect(program.$version, equals(version));
+      expect(program.$description, equals(description));
+      expect(program.$usage, equals(usage));
       expect(program.subCommands.length, equals(0));
 
       // should get default options in global command
@@ -28,10 +32,10 @@ void main() {
         .where((Option v) => v.long == '--help')
         .map((Option v) => v.long)
         .toList();
-      expect(program.options.length, equals(2));
+      expect(program.options.length, equals(3));
       expect(helper.length, equals(1));
       expect(helper[0], equals('--help'));
-    }, skip: true);
+    }, skip: false);
 
     test('if not define any action, should run global action', () {
       bool hasRunDefaultAction = false;
@@ -71,7 +75,7 @@ void main() {
 
   group('options', () {
     test('add a global options', () {
-      expect(program.options.length, equals(2));
+      expect(program.options.length, equals(3));
       program
         .option('-f, --force', 'force run this command');
 
@@ -80,26 +84,26 @@ void main() {
         .map((Option v) => v.long)
         .toList();
       expect(force[0], equals('--force'));
-      expect(program.options.length, equals(3));
-    }, skip: true);
+      expect(program.options.length, equals(4));
+    }, skip: false);
 
     test('add multiple options', () {
-      expect(program.options.length, equals(2));
+      expect(program.options.length, equals(3));
       program
         .option('-p, --peppers', 'Add peppers')
         .option('-P, --pineapple', 'Add pineapple')
         .option('-b, --bbq-sauce', 'Add bbq sauce')
         .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
 
-      expect(program.options, hasLength(6));
+      expect(program.options, hasLength(7));
       program.parseArgv(['--peppers', '--pineapple']);
       expect(program.subCommands, hasLength(0));
       expect(program.$option, containsPair('peppers', true));
       expect(program.$option, containsPair('pineapple', true));
-    }, skip: true);
+    }, skip: false);
 
     test('multiple options need set value but some it did not set', () {
-      expect(program.options.length, equals(2));
+      expect(program.options.length, equals(3));
       program
         .option('-p, --peppers', 'Add peppers')
         .option('-P, --pineapple', 'Add pineapple')
@@ -109,7 +113,7 @@ void main() {
         ['--cheese', '--pineapple']); // missing value it should be ['--cheese', '[value]', '--pineapple']
       expect(program.$option, containsPair('pineapple', true));
       expect(program.$option, containsPair('cheese', '')); // should can't get any value, it's empty
-    }, skip: true);
+    }, skip: false);
 
     test('add a command optoins', () {
       program
@@ -121,21 +125,21 @@ void main() {
       });
 
       program.parseArgv(['add', '~/home', '-a']);
-    }, skip: true);
+    }, skip: false);
 
     test('if input invalid command optoins, it should be ignore', () {
       program
         .command('add <target>', 'add a target')
         .option('-a, -all', 'display all you can see')
         .action((Map argv, Map options) {
-        expect(options.keys, hasLength(3));
+        expect(options.keys, hasLength(4));
         expect(program.subCommands, hasLength(1));
         expect(options, containsPair('all', true));
       });
 
       // [-d] and [--abc] was not defined in program, it should be ignore
       program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
-    }, skip: true);
+    }, skip: false);
 
     test('define a cli app without any command, and it will trigger global action', () {
       bool hasInvokeDefaultAction = false;
@@ -148,8 +152,8 @@ void main() {
       // [-d] and [--abc] was not defined in program, it should be ignore
       program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
       expect(hasInvokeDefaultAction, isTrue);
-    }, skip: true);
-  }, skip: true);
+    }, skip: false);
+  }, skip: false);
 
   group('command', () {
     test('add a global command', () {
@@ -198,5 +202,5 @@ void main() {
       expect(hasInvokeListCommand, isTrue);
       expect(program.subCommands.keys, hasLength(2));
     });
-  }, skip: true);
+  }, skip: false);
 }
