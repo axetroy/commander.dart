@@ -11,6 +11,7 @@ num max(List<num> numList) {
 
 String repeat(String str, int times) {
   List<String> list = [];
+  if (times <= 0) return str;
   while (times != 0) {
     list.add(str);
     times--;
