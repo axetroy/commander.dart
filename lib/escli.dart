@@ -15,7 +15,7 @@ class Commander extends EventEmitter {
   List<String> argv;
   List<Map> _argv = [];
   Map<String, Commander> children = new Map();
-  bool root = true;
+  bool $root = true;
   Commander parent;
 
   String env = 'product';
@@ -23,8 +23,9 @@ class Commander extends EventEmitter {
   Map<String, dynamic> $option = new Map();
   Map<String, String> $argv = new Map();
 
-  Commander([String name]) {
+  Commander({String name, bool root}) {
     $name = name ?? '';
+    $root = root ?? false;
     this.option('-V, --version', 'print the current version', (bool requireVersion) {
       if (requireVersion == true) {
         stdout.write($version);
@@ -75,8 +76,7 @@ class Commander extends EventEmitter {
     String command = commands.removeAt(0);
     argv = commands;
 
-    Commander subCommand = new Commander(command);
-    subCommand.root = false;
+    Commander subCommand = new Commander(name: command, root: false);
 
     subCommand
       ..description(description ?? '')
