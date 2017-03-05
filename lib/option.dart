@@ -56,9 +56,6 @@ class Option extends EventEmitter {
     return arg == short || arg == long;
   }
 
-  /**
-   * 把字符串，根据这个option，生成字段
-   */
   dynamic parseArgv(List<String> _arguments) {
     List<String> arguments = _arguments.toList();
     while (arguments.length != 0) {
@@ -78,8 +75,12 @@ class Option extends EventEmitter {
             if (new RegExp('^-+').hasMatch(nextElement)) {
               // recover the element was remove
               arguments.insert(0, nextElement);
-              value = '';
-            } else {
+              value = defaultValue ?? '';
+            }
+            else if (nextElement.isEmpty) {
+              value = defaultValue ?? '';
+            }
+            else {
               value = nextElement;
             }
           }
