@@ -13,11 +13,9 @@ those api are not graceful enough. so I want build a lib use like commander.js
 
 it make you move cli tool from Nodejs easier.
 
-remember, This lib in developing. 
+This lib in developing. I can't make sure it work like expect even I have write many test cases.
 
-even I have write many test case for this. Still can't make sure it work like expect.
-
-use at your risk. any way I am :)
+Enjoy it!
 
 ## Requirement
 
@@ -25,7 +23,7 @@ use at your risk. any way I am :)
 
 ## Supports
 
-- [ ] Windows
+- [x] Windows
 - [x] Linux
 - [x] MacOS
 
