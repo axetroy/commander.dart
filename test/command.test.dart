@@ -18,7 +18,7 @@ void main() {
     expect(model["value"], isNull);
     cmd.parse(['add', '/home/axetroy']);
     expect(model["value"], '/home/axetroy');
-  }, skip: true);
+  }, skip: false);
 
   test('multi value', () {
     Command cmd = new Command('add <from> <to>', 'add a dir to contain');
@@ -43,7 +43,7 @@ void main() {
     expect(toModel["required"], isTrue);
     expect(toModel["optional"], isFalse);
     expect(toModel["value"], '/home/admin');
-  }, skip: true);
+  }, skip: false);
 
   test('command without value', () {
     Command cmd = new Command('add', 'add a dir to contain');
@@ -54,7 +54,7 @@ void main() {
     cmd.parse(['add', '/home/axetroy', '/home/admin']);
 
     expect(cmd.models, isEmpty);
-  }, skip: true);
+  }, skip: false);
 
   test('command without value', () {
     Command cmd = new Command('add [dir]', 'add a dir to contain');
@@ -69,7 +69,7 @@ void main() {
     expect(dirModel, isNotNull);
     expect(dirModel["value"], isNull);
     expect(output["dir"], isNull);
-  }, skip: true);
+  }, skip: false);
 
   test('command without value', () {
     Command cmd = new Command('add [dir]', 'add a dir to contain');
@@ -83,7 +83,7 @@ void main() {
     Map dirModel = cmd.models["dir"];
     expect(dirModel, isNotNull);
     expect(output["dir"], "/home");
-  }, skip: true);
+  }, skip: false);
 
   test('command with flag', () {
     Command cmd = new Command('add [dir]', 'add a dir to contain');
@@ -97,7 +97,7 @@ void main() {
     Map dirModel = cmd.models["dir"];
     expect(dirModel, isNotNull);
     expect(output["dir"], "/home");
-  }, skip: true);
+  }, skip: false);
 
   test('command with flag', () {
     Command cmd = new Command('add [dir]', 'add a dir to contain');
@@ -111,7 +111,7 @@ void main() {
     Map dirModel = cmd.models["dir"];
     expect(dirModel, isNotNull);
     expect(output["dir"], "/home");
-  }, skip: true);
+  }, skip: false);
 
   test('multi value', () {
     Command cmd = new Command('add <from> <to>', 'add a dir to contain');
@@ -136,7 +136,7 @@ void main() {
     expect(toModel["required"], isTrue);
     expect(toModel["optional"], isFalse);
     expect(toModel["value"], '/home/admin');
-  }, skip: true);
+  }, skip: false);
 
   test('command without value but with flag', () {
     Command cmd = new Command('add', 'add a dir to contain');
