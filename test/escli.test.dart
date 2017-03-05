@@ -169,6 +169,22 @@ void main() {
       program.parseArgv(['-all', '--a', '--bb', '-t', '/home/axetroy']);
       expect(hasTriggerOptionHandler, isTrue);
     }, skip: false);
+
+    test('set multiple defaultValue', () {
+      String username;
+      String target;
+      program..option('-u, --username <name>', 'your user name', (name) {
+        username = name;
+      }, 'axetroy')..option('-t, --to <target>', 'target dir', (dir) {
+        target = dir;
+      }, '/home/axetroy');
+
+      // this is all missing value
+      program.parseArgv(['-all', '--a', '--bb', '-t']);
+
+      expect(username, equals('axetroy'));
+      expect(target, equals('/home/axetroy'));
+    }, skip: false);
   }, skip: false);
 
   group('command', () {

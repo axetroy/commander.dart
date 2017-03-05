@@ -70,6 +70,18 @@ void main() {
       option.parseArgv(['--to']);
       expect(option.value, equals(''));
     });
+
+    test('set a default value, if it do not set, should be defaultValue', () {
+      option = new Option('-t, --to <dir>', 'ouput dir', (dir) {}, '/home/axetroy');
+
+      option.parseArgv(['--to']);
+      expect(option.key, equals('to'));
+      expect(option.value, equals('/home/axetroy'));
+
+      option.parseArgv(['--to', '']);
+      expect(option.key, equals('to'));
+      expect(option.value, equals('/home/axetroy'));
+    });
   }, skip: false);
 
   group('command function', () {
