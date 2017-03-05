@@ -201,3 +201,5 @@ Print '${$name} <command> --help for get more infomation'
   }
 
 }
+
+Commander program = new Commander(root: true);
