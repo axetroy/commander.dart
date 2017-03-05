@@ -12,8 +12,7 @@ class Commander extends EventEmitter {
   String $usage = '';
 
   List<Option> options = [];
-  List<String> argv;
-  List<Map> _argv = [];
+  Map<String, Map> models = new Map();
   Map<String, Commander> children = new Map();
   bool $root = true;
   Commander parent;
@@ -74,13 +73,12 @@ class Commander extends EventEmitter {
   Commander command(String name, [String description, Map<String, dynamic> options]) {
     List<String> commands = name.split(new RegExp(r'\s+')).toList();
     String command = commands.removeAt(0);
-    argv = commands;
 
     Commander subCommand = new Commander(name: command, root: false);
 
     subCommand
       ..description(description ?? '')
-      ..parseExpectedArgs(argv);
+      ..parseExpectedArgs(commands);
 
     subCommand.parent = this;
     children[command] = subCommand;
@@ -91,31 +89,31 @@ class Commander extends EventEmitter {
     if (args.length == 0) return this;
     int index = 0;
     args.forEach((arg) {
-      Map<String, dynamic> argDetails = new Map();
-      argDetails["name"] = "";
-      argDetails["required"] = false;
-      argDetails["variadic"] = false;
-      argDetails["index"] = index;
+      Map<String, dynamic> model = new Map();
+      model["name"] = "";
+      model["required"] = false;
+      model["variadic"] = false;
+      model["index"] = index;
 
       switch (arg[0]) {
         case '<':
-          argDetails["required"] = true;
-          argDetails["name"] = arg.trim().replaceAll(new RegExp(r'^[\s\S]|[\s\S]$'), '');
+          model["required"] = true;
+          model["name"] = arg.trim().replaceAll(new RegExp(r'^[\s\S]|[\s\S]$'), '');
           break;
         case '[':
-          argDetails["name"] = arg.replaceAll(new RegExp(r'^[\s\S]|[\s\S]$'), '');
+          model["name"] = arg.replaceAll(new RegExp(r'^[\s\S]|[\s\S]$'), '');
           break;
       }
 
-      final String name = argDetails["name"];
+      final String name = model["name"];
 
       if (name.length > 3 && name.substring(name.length - 3, name.length) == '...') {
-        argDetails["variadic"] = true;
-        argDetails["name"] = name.substring(name.length - 3, name.length);
+        model["variadic"] = true;
+        model["name"] = name.substring(name.length - 3, name.length);
       }
 
       if (name.isNotEmpty) {
-        _argv.add(argDetails);
+        models[name] = model;
       }
       index++;
     });
@@ -147,10 +145,19 @@ class Commander extends EventEmitter {
       option.emit('run_handler', option.value);
     });
 
-    // parse argv and set the value
-    _argv.forEach((Map argv) {
+    /**
+     * parse command
+     * example:
+     * program
+     *    ..name('git')
+     *    .command('add <repo>')
+     *    .action((Map argv, Map options){
+     *        print(argv["repo"]);
+     *    });
+     */
+    models.forEach((String name, Map argv) {
       final current = arguments[argv["index"]];
-      $argv[argv["name"]] = current.indexOf('-') == 0 ? '' : current;
+      $argv[name] = current.indexOf('-') == 0 ? '' : current;
     });
 
     String command = arguments.removeAt(0);
