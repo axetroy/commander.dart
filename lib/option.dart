@@ -39,7 +39,7 @@ class Option extends EventEmitter {
 
     if (requireValue) value = $defaultValue ?? '';
 
-    this.on('run_handler', (data) {
+    this.on('run_handler', ([dynamic data]) {
       if (handler is Function) {
         // if the options like this:
         // options: --from <dir>

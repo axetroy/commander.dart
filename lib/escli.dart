@@ -42,20 +42,23 @@ class Commander extends EventEmitter {
 
   Commander([String name]) {
     $name = name ?? '';
-    this.option('-V, --version', 'print the current version');
-    this.option('-h, --help', 'print the help info about ${$name}');
-    this.option('-dev, --development', 'dart environment variables');
-    this.on('version', (version) {
-      stdout.write(version);
-      exit(1);
+    this.option('-V, --version', 'print the current version', (bool requireVersion) {
+      if (requireVersion == true) {
+        stdout.write($version);
+        exit(1);
+      }
     });
-    this.on('help', (version) {
-      this.help();
-      exit(1);
+    this.option('-h, --help', 'print the help info about ${$name}', (bool requireHelp) {
+      if (requireHelp == true) {
+        this.help();
+        exit(1);
+      }
     });
-    this.on('dev', (version) {
-      stdout.write('env');
-      exit(1);
+    this.option('-dev, --development', 'dart environment variables', (bool isDev) {
+      if (isDev == true) {
+        stdout.write('env');
+        exit(1);
+      }
     });
   }
 
@@ -161,17 +164,6 @@ class Commander extends EventEmitter {
       $option[option.key] = option.value;
       option.emit('run_handler', option.value);
     });
-
-    if ($option["version"]) {
-      this.emit('version', $version);
-    }
-
-    if ($option["help"]) {
-      this.emit('help', null);
-    }
-    else if ($option["version"]) {
-      this.emit('version', $version);
-    }
 
     // parse argv and set the value
     _argv.forEach((Map argv) {
