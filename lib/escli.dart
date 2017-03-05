@@ -33,7 +33,7 @@ class Commander extends EventEmitter {
   List<Option> options = [];
   List<String> argv;
   List<Map> _argv = [];
-  Map<String, Commander> subCommands = new Map();
+  Map<String, Commander> children = new Map();
   bool root = true;
   Commander parent;
 
@@ -102,7 +102,7 @@ class Commander extends EventEmitter {
       ..parseExpectedArgs(argv);
 
     subCommand.parent = this;
-    subCommands[command] = subCommand;
+    children[command] = subCommand;
     return subCommand;
   }
 
@@ -174,7 +174,7 @@ class Commander extends EventEmitter {
 
     String command = arguments.removeAt(0);
 
-    Commander subCommand = subCommands[command];
+    Commander subCommand = children[command];
 
     if (subCommand == null) {
       // not root command
@@ -191,9 +191,9 @@ class Commander extends EventEmitter {
 
   void help() {
     num maxOptionLength = _max(options.map((Option op) => op.flags.length).toList());
-    num maxCommandLength = _max(subCommands.values.map((Commander command) => command.$name.length).toList());
+    num maxCommandLength = _max(children.values.map((Commander command) => command.$name.length).toList());
 
-    String commands = subCommands.values.map((Commander command) {
+    String commands = children.values.map((Commander command) {
       return '    ${command.$name} ${_repeat(' ', maxCommandLength - command.$name.length + 4)} ${command.$description}';
     }).join('\n');
 

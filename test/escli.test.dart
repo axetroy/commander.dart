@@ -25,7 +25,7 @@ void main() {
       expect(program.$version, equals(version));
       expect(program.$description, equals(description));
       expect(program.$usage, equals(usage));
-      expect(program.subCommands.length, equals(0));
+      expect(program.children.length, equals(0));
 
       // should get default options in global command
       List helper = program.options
@@ -97,7 +97,7 @@ void main() {
 
       expect(program.options, hasLength(7));
       program.parseArgv(['--peppers', '--pineapple']);
-      expect(program.subCommands, hasLength(0));
+      expect(program.children, hasLength(0));
       expect(program.$option, containsPair('peppers', true));
       expect(program.$option, containsPair('pineapple', true));
     }, skip: false);
@@ -133,7 +133,7 @@ void main() {
         .option('-a, -all', 'display all you can see')
         .action((Map argv, Map options) {
         expect(options.keys, hasLength(4));
-        expect(program.subCommands, hasLength(1));
+        expect(program.children, hasLength(1));
         expect(options, containsPair('all', true));
       });
 
@@ -146,7 +146,7 @@ void main() {
       program
         .action((Map argv, Map options) {
         hasInvokeDefaultAction = true;
-        expect(program.subCommands.keys, hasLength(0));
+        expect(program.children.keys, hasLength(0));
       });
 
       // [-d] and [--abc] was not defined in program, it should be ignore
@@ -192,8 +192,8 @@ void main() {
       program
         .command('add <target>', 'add a target');
 
-      expect(program.subCommands is Map, equals(true));
-      expect(program.subCommands["add"] is Commander, equals(true));
+      expect(program.children is Map, equals(true));
+      expect(program.children["add"] is Commander, equals(true));
     });
 
     test('add a global command and action', () {
@@ -232,7 +232,7 @@ void main() {
       program.parseArgv(['list', '-a', '-d', '--abc']);
 
       expect(hasInvokeListCommand, isTrue);
-      expect(program.subCommands.keys, hasLength(2));
+      expect(program.children.keys, hasLength(2));
     });
   }, skip: false);
 }
