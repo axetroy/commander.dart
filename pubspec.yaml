@@ -6,7 +6,7 @@ authors:
 homepage: https://github.com/axetroy/command
 
 dependencies:
-  ee: ">=0.0.1 <= 1.0.0"
+  ee:
 
 dev_dependencies:
   test:
