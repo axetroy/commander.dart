@@ -37,6 +37,8 @@ class Commander extends EventEmitter {
   bool root = true;
   Commander parent;
 
+  String env = 'product';
+
   Map<String, dynamic> $option = new Map();
   Map<String, String> $argv = new Map();
 
@@ -45,19 +47,18 @@ class Commander extends EventEmitter {
     this.option('-V, --version', 'print the current version', (bool requireVersion) {
       if (requireVersion == true) {
         stdout.write($version);
-        exit(1);
+        exit(88);
       }
     });
     this.option('-h, --help', 'print the help info about ${$name}', (bool requireHelp) {
       if (requireHelp == true) {
         this.help();
-        exit(1);
+        exit(89);
       }
     });
     this.option('-dev, --development', 'dart environment variables', (bool isDev) {
       if (isDev == true) {
-        stdout.write('env');
-        exit(1);
+        env = 'development';
       }
     });
   }
@@ -177,8 +178,7 @@ class Commander extends EventEmitter {
 
     if (subCommand == null) {
       // not root command
-      bool isDev = $option["development"];
-      if (command.isNotEmpty && command.indexOf('-') != 0 && isDev == true) {
+      if (command.isNotEmpty && command.indexOf('-') != 0 && env == 'development') {
         stderr.write('can\' found $command, please run ${$name} --help to get help infomation');
       } else {
         this.emit($name);
