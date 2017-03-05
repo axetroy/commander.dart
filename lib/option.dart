@@ -1,4 +1,5 @@
 import 'package:ee/ee.dart' show EventEmitter;
+import 'package:escli/utils.dart';
 
 class Option extends EventEmitter {
   String flags;
@@ -93,14 +94,4 @@ class Option extends EventEmitter {
     }
     return value;
   }
-}
-
-String camelcase(String flag) {
-  return flag.split('-')
-    .where((str) => str.isNotEmpty)
-    .reduce((str, String word) {
-    List<String> wordList = word.split('').toList();
-    wordList = wordList.isEmpty ? [''] : wordList;
-    return str + wordList.removeAt(0).toUpperCase() + wordList.join('');
-  });
 }

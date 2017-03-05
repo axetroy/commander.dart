@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
-import 'package:escli/option.dart' show Option, camelcase;
+import 'package:escli/option.dart' show Option;
+import 'package:escli/utils.dart';
 
 void main() {
   Option option;

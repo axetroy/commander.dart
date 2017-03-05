@@ -3,26 +3,7 @@ library escli;
 import 'dart:io';
 import 'package:ee/ee.dart' show EventEmitter;
 import 'option.dart' show Option;
-
-num _max(List<num> numList) {
-  if (numList.length == 0) return 0;
-  num output = numList[0];
-  numList.forEach((num num) {
-    if (num > output) {
-      output = num;
-    }
-  });
-  return output;
-}
-
-String _repeat(String str, int times) {
-  List<String> list = [];
-  while (times != 0) {
-    list.add(str);
-    times--;
-  }
-  return list.join('');
-}
+import 'package:escli/utils.dart';
 
 class Commander extends EventEmitter {
   String $name = '';
@@ -190,15 +171,16 @@ class Commander extends EventEmitter {
   }
 
   void help() {
-    num maxOptionLength = _max(options.map((Option op) => op.flags.length).toList());
-    num maxCommandLength = _max(children.values.map((Commander command) => command.$name.length).toList());
+    num maxOptionLength = max(options.map((Option op) => op.flags.length).toList());
+    num maxCommandLength = max(children.values.map((Commander command) => command.$name.length).toList());
 
     String commands = children.values.map((Commander command) {
-      return '    ${command.$name} ${_repeat(' ', maxCommandLength - command.$name.length + 4)} ${command.$description}';
+      String margin = repeat(' ', maxCommandLength - command.$name.length + 4);
+      return '    ${command.$name} ${margin} ${command.$description}';
     }).join('\n');
 
     String optionsStr = options.map((Option op) {
-      String margin = _repeat(' ', maxOptionLength - op.flags.length + 4);
+      String margin = repeat(' ', maxOptionLength - op.flags.length + 4);
       return '    ${op.flags} ${margin} ${op.description}';
     }).join('\n');
 
