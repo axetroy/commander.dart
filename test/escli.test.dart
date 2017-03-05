@@ -32,8 +32,8 @@ void main() {
         .where((Option v) => v.long == '--help')
         .map((Option v) => v.long)
         .toList();
-      expect(program.options.length, equals(3));
-      expect(helper.length, equals(1));
+      expect(program.options, hasLength(2));
+      expect(helper, hasLength(1));
       expect(helper[0], equals('--help'));
     }, skip: false);
 
@@ -75,7 +75,7 @@ void main() {
 
   group('options', () {
     test('add a global options', () {
-      expect(program.options.length, equals(3));
+      expect(program.options, hasLength(2));
       program
         .option('-f, --force', 'force run this command');
 
@@ -84,18 +84,18 @@ void main() {
         .map((Option v) => v.long)
         .toList();
       expect(force[0], equals('--force'));
-      expect(program.options.length, equals(4));
+      expect(program.options, hasLength(3));
     }, skip: false);
 
     test('add multiple options', () {
-      expect(program.options.length, equals(3));
+      expect(program.options, hasLength(2));
       program
         .option('-p, --peppers', 'Add peppers')
         .option('-P, --pineapple', 'Add pineapple')
         .option('-b, --bbq-sauce', 'Add bbq sauce')
         .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]');
 
-      expect(program.options, hasLength(7));
+      expect(program.options, hasLength(6));
       program.parseArgv(['--peppers', '--pineapple']);
       expect(program.children, hasLength(0));
       expect(program.$option, containsPair('peppers', true));
@@ -103,7 +103,7 @@ void main() {
     }, skip: false);
 
     test('multiple options need set value but some it did not set', () {
-      expect(program.options.length, equals(3));
+      expect(program.options, hasLength(2));
       program
         .option('-p, --peppers', 'Add peppers')
         .option('-P, --pineapple', 'Add pineapple')
@@ -132,7 +132,7 @@ void main() {
         .command('add <target>', 'add a target')
         .option('-a, -all', 'display all you can see')
         .action((Map argv, Map options) {
-        expect(options.keys, hasLength(4));
+        expect(options.keys, hasLength(3));
         expect(program.children, hasLength(1));
         expect(options, containsPair('all', true));
       });
@@ -149,8 +149,7 @@ void main() {
         expect(program.children.keys, hasLength(0));
       });
 
-      // [-d] and [--abc] was not defined in program, it should be ignore
-      program.parseArgv(['add', '~/home', '-a', '-d', '--abc']);
+      program.parseArgv(['~/home', '-a', '-d', '--abc']);
       expect(hasInvokeDefaultAction, isTrue);
     }, skip: false);
 
@@ -194,14 +193,15 @@ void main() {
 
       expect(program.children is Map, equals(true));
       expect(program.children["add"] is Commander, equals(true));
-    });
+    }, skip: false);
 
-    test('add a global command and action', () {
+    test('add a command and action', () {
       bool actionHasBeApply = false;
       program
         .command('add <target>', 'add a target')
         .action((Map argv, Map options) {
         actionHasBeApply = true;
+        expect(program.children, hasLength(1));
         expect(argv, isMap);
         expect(options, isMap);
         expect(argv["target"], equals('~/home'));
@@ -209,8 +209,8 @@ void main() {
 
       program.parseArgv(['add', '~/home']);
 
-      expect(actionHasBeApply, equals(true));
-    });
+      expect(actionHasBeApply, isTrue);
+    }, skip: false);
 
     test('define multiple command', () {
       bool hasInvokeListCommand = false;
@@ -233,6 +233,6 @@ void main() {
 
       expect(hasInvokeListCommand, isTrue);
       expect(program.children.keys, hasLength(2));
-    });
+    }, skip: false);
   }, skip: false);
 }

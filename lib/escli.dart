@@ -16,7 +16,7 @@ class Commander extends EventEmitter {
   Map<String, Commander> children = new Map();
   Commander parent;
 
-  String env = 'product';
+  bool haveSetAction = false;
 
   Map<String, dynamic> $option = new Map();
   Map<String, String> $argv = new Map();
@@ -33,11 +33,6 @@ class Commander extends EventEmitter {
       if (requireHelp == true) {
         this.help();
         exit(89);
-      }
-    });
-    this.option('-dev, --development', 'dart environment variables', (bool isDev) {
-      if (isDev == true) {
-        env = 'development';
       }
     });
   }
@@ -91,9 +86,9 @@ class Commander extends EventEmitter {
       model["name"] = "";
       model["required"] = false;
       model["variadic"] = false;
-            model["index"] = index;
+      model["index"] = index;
 
-            switch (arg[0]) {
+      switch (arg[0]) {
         case '<':
           model["required"] = true;
           model["name"] = arg.trim().replaceAll(new RegExp(r'^[\s\S]|[\s\S]$'), '');
@@ -119,6 +114,7 @@ class Commander extends EventEmitter {
   }
 
   Commander action(void handler(Map argv, Map option)) {
+    haveSetAction = true;
     this.on($name, (dynamic data) => handler($argv, $option));
     return this;
   }
@@ -158,21 +154,55 @@ class Commander extends EventEmitter {
       $argv[name] = current.indexOf('-') == 0 ? '' : current;
     });
 
-    String command = arguments.removeAt(0);
+    String command = arguments.isNotEmpty ? arguments.removeAt(0) : '';
 
     Commander childCommand = children[command];
 
-    if (childCommand == null) {
-      // not root command
-      if (command.isNotEmpty && command.indexOf('-') != 0 && env == 'development') {
-        stderr.write('can\' found $command, please run ${$name} --help to get help infomation');
-      } else {
+    if (childCommand == null || command == '') {
+      // next argument is not empty && not a flag, then:
+      // 1. if not defined any command in root Command, then it will trigger the global action
+      //    RootCommand.children.length == 0;
+      //    argument: 'whatever_command'
+      // 2. it will emit the event to fire action if have require value
+      //    command: add <dir>
+      //    argument: add /home/axetroy
+      // 3. if command don't have require value, then it should throw error: invalid command
+      //    command: add
+      //    argument: add /home/axetroy   # Invalid Command: /home/axetroy
+      if (command.isNotEmpty && command.indexOf('-') != 0) {
+        Commander root = getRoot();
+        // trigger the global action
+        if (root.children.isEmpty && root.haveSetAction == true) {
+          root.emit(root.$name);
+        }
+        else if ($argv.keys.length != 0) {
+          this.emit($name);
+        }
+        else {
+          stderr.write('\nInvalid Command: $command\n');
+          this.help();
+        }
+      }
+      else {
         this.emit($name);
       }
     }
     else {
       childCommand.parseArgv(arguments);
     }
+  }
+
+  /**
+   * return the root command
+   */
+  Commander getRoot() {
+    Commander current = this;
+    Commander root = current;
+    while (current.parent != null) {
+      current = current.parent;
+      root = current;
+    }
+    return root;
   }
 
   void help() {
@@ -195,13 +225,13 @@ class Commander extends EventEmitter {
 
     ${$description}
 
-  commands:
+  Commands:
 ${commands.isNotEmpty ? commands : '    can not found a valid command'}
 
-  options:
+  Options:
 ${optionsStr}
 
-Print '${$name} <command> --help for get more infomation'
+Run ${$name} <command> --help for get more infomation
 ''');
   }
 
