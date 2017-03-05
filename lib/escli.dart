@@ -14,7 +14,6 @@ class Commander extends EventEmitter {
   List<Option> options = [];
   Map<String, Map> models = new Map();
   Map<String, Commander> children = new Map();
-  bool $root = true;
   Commander parent;
 
   String env = 'product';
@@ -22,9 +21,8 @@ class Commander extends EventEmitter {
   Map<String, dynamic> $option = new Map();
   Map<String, String> $argv = new Map();
 
-  Commander({String name, bool root}) {
+  Commander({String name}) {
     $name = name ?? '';
-    $root = root ?? false;
     this.option('-V, --version', 'print the current version', (bool requireVersion) {
       if (requireVersion == true) {
         stdout.write($version);
@@ -74,15 +72,15 @@ class Commander extends EventEmitter {
     List<String> commands = name.split(new RegExp(r'\s+')).toList();
     String command = commands.removeAt(0);
 
-    Commander subCommand = new Commander(name: command, root: false);
+    Commander childCommand = new Commander(name: command);
+    childCommand.parent = this;
 
-    subCommand
+    childCommand
       ..description(description ?? '')
       ..parseExpectedArgs(commands);
 
-    subCommand.parent = this;
-    children[command] = subCommand;
-    return subCommand;
+    children[command] = childCommand;
+    return childCommand;
   }
 
   Commander parseExpectedArgs(List<String> args) {
@@ -93,9 +91,9 @@ class Commander extends EventEmitter {
       model["name"] = "";
       model["required"] = false;
       model["variadic"] = false;
-      model["index"] = index;
+            model["index"] = index;
 
-      switch (arg[0]) {
+            switch (arg[0]) {
         case '<':
           model["required"] = true;
           model["name"] = arg.trim().replaceAll(new RegExp(r'^[\s\S]|[\s\S]$'), '');
@@ -162,9 +160,9 @@ class Commander extends EventEmitter {
 
     String command = arguments.removeAt(0);
 
-    Commander subCommand = children[command];
+    Commander childCommand = children[command];
 
-    if (subCommand == null) {
+    if (childCommand == null) {
       // not root command
       if (command.isNotEmpty && command.indexOf('-') != 0 && env == 'development') {
         stderr.write('can\' found $command, please run ${$name} --help to get help infomation');
@@ -173,7 +171,7 @@ class Commander extends EventEmitter {
       }
     }
     else {
-      subCommand.parseArgv(arguments);
+      childCommand.parseArgv(arguments);
     }
   }
 
