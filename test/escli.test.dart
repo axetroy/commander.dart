@@ -3,7 +3,7 @@ import 'package:escli/option.dart' show Option;
 import 'package:test/test.dart';
 
 void main() {
-  Commander program = new Commander();
+  Commander program;
   String name = 'escli';
   String version = '1.2.0';
   String description = 'escli, a lib to build your cli-app';
@@ -13,10 +13,10 @@ void main() {
     program = new Commander();
 
     program
-      .name(name)
-      .version(version)
-      .description(description)
-      .usage(usage);
+      ..name(name)
+      ..version(version)
+      ..description(description)
+      ..usage(usage);
   });
 
   group('basic', () {
