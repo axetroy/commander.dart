@@ -41,7 +41,9 @@ class Command extends EventEmitter {
           model["optional"] = false;
         }
         else {
-          throw new Exception('Invalid Command $key in $command');
+//          throw new Exception('Invalid Command "$key" in "$command"');
+          print('Invalid Command "$key" in "$command"');
+          return;
         }
         models[key] = model;
         index++;

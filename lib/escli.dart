@@ -2,7 +2,8 @@ library escli;
 
 import 'dart:io';
 import 'package:ee/ee.dart' show EventEmitter;
-import 'option.dart' show Option;
+import 'package:escli/option.dart' show Option;
+import 'package:escli/command.dart' show Command;
 import 'package:escli/utils.dart';
 
 class Commander extends EventEmitter {
@@ -15,7 +16,9 @@ class Commander extends EventEmitter {
   Map<String, Map> models = new Map();
   Map<String, Commander> children = new Map();
   Commander parent;
+  Command cmd;
 
+  List<String> fullArguments = [];
   bool haveSetAction = false;
 
   Map<String, dynamic> $option = new Map();
@@ -70,6 +73,8 @@ class Commander extends EventEmitter {
     Commander childCommand = new Commander(name: command);
     childCommand.parent = this;
 
+    childCommand.cmd = new Command(name, description);
+
     childCommand
       ..description(description ?? '')
       ..parseExpectedArgs(commands);
@@ -120,6 +125,12 @@ class Commander extends EventEmitter {
   }
 
   void parseArgv(List<String> arguments) {
+    if(parent==null) {
+      fullArguments = arguments.toList();
+    }else{
+      Commander root = getRoot();
+      fullArguments = root.fullArguments;
+    }
     arguments = arguments.toList();
 
     $option = new Map();
@@ -149,10 +160,20 @@ class Commander extends EventEmitter {
      *        print(argv["repo"]);
      *    });
      */
-    models.forEach((String name, Map argv) {
-      final current = arguments[argv["index"]];
-      $argv[name] = current.indexOf('-') == 0 ? '' : current;
-    });
+//    models.forEach((String name, Map argv) {
+//      final current = arguments[argv["index"]];
+//      $argv[name] = current.indexOf('-') == 0 ? '' : current;
+//    });
+
+    if (cmd != null) {
+      cmd.parse(fullArguments);
+      $argv = cmd.toMap();
+    } else {
+      models.forEach((String name, Map argv) {
+        final current = arguments[argv["index"]];
+        $argv[name] = current.indexOf('-') == 0 ? '' : current;
+      });
+    }
 
     String command = arguments.isNotEmpty ? arguments.removeAt(0) : '';
 
