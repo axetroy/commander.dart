@@ -3,7 +3,7 @@ version: 0.0.1
 description: The complete solution for dart command-line interfaces.
 authors:
   - axetroy <troy450409405@gmail.com>
-homepage: https://github.com/axetroy/command
+homepage: https://github.com/axetroy/commander.dart
 
 dependencies:
   ee:
