@@ -97,6 +97,12 @@ class Commander extends EventEmitter {
 
     $alias = alias;
 
+    if (parent.children[alias] == null) {
+      parent.children[alias] = this;
+    } else {
+      throw new Exception('duplicate declare alias: $alias');
+    }
+
     return this;
   }
 
@@ -121,7 +127,7 @@ class Commander extends EventEmitter {
 
     String command = arguments.isNotEmpty ? arguments.removeAt(0) : '';
 
-    Commander childCommand = children[command];
+    Commander childCommand = children[command] ?? children[$alias] ?? null;
 
     /**
      * parse command
