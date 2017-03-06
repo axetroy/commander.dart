@@ -86,30 +86,21 @@ class Commander extends EventEmitter {
   }
 
   void parseArgv(List<String> arguments) {
-    if(parent==null) {
+    if (parent == null) {
       fullArguments = arguments.toList();
-    }else{
+    } else {
       Commander root = getRoot();
       fullArguments = root.fullArguments;
     }
     arguments = arguments.toList();
+    List originArguments = arguments.toList();
 
     $option = new Map();
     $argv = new Map();
 
-    //  parse options and set the value
-    options.forEach((Option option) {
-      option.parseArgv(arguments);
-      // validate the options filed
-      // if this options is required, but not set this value, and not found default value. it will throw an error
-      if (option.haveSetFlag && option.required && option.value == '') {
-        throw new Exception(
-          '${option.long} <value> is required field, or you can set it to optional ${option.long} [value]'
-        );
-      }
-      $option[option.key] = option.value;
-      option.emit('run_handler', option.value);
-    });
+    String command = arguments.isNotEmpty ? arguments.removeAt(0) : '';
+
+    Commander childCommand = children[command];
 
     /**
      * parse command
@@ -121,11 +112,6 @@ class Commander extends EventEmitter {
      *        print(argv["repo"]);
      *    });
      */
-//    models.forEach((String name, Map argv) {
-//      final current = arguments[argv["index"]];
-//      $argv[name] = current.indexOf('-') == 0 ? '' : current;
-//    });
-
     if (cmd != null) {
       cmd.parse(fullArguments);
       $argv = cmd.toMap();
@@ -136,9 +122,23 @@ class Commander extends EventEmitter {
       });
     }
 
-    String command = arguments.isNotEmpty ? arguments.removeAt(0) : '';
+    void optionParse(Commander commander){
+      //  parse options and set the value
+      commander.options.forEach((Option option) {
+        option.parseArgv(originArguments);
+        // validate the options filed
+        // if this options is required, but not set this value, and not found default value. it will throw an error
+        if (option.haveSetFlag && option.required && option.value == '') {
+          throw new Exception(
+            '${option.long} <value> is required field, or you can set it to optional ${option.long} [value]'
+          );
+        }
+        $option[option.key] = option.value;
+        option.emit('run_handler', option.value);
+      });
+    }
 
-    Commander childCommand = children[command];
+    optionParse(childCommand ?? this);
 
     if (childCommand == null || command == '') {
       // next argument is not empty && not a flag, then:
@@ -187,6 +187,16 @@ class Commander extends EventEmitter {
     return root;
   }
 
+  String getName(){
+    String output = $name;
+    Commander current = this;
+    while (current.parent != null) {
+      output = current.parent.$name +' ' + output;;
+      current = current.parent;
+    }
+    return output;
+  }
+
   void help() {
     num maxOptionLength = max(options.map((Option op) => op.flags.length).toList());
     num maxCommandLength = max(children.values.map((Commander command) => command.$name.length).toList());
@@ -203,7 +213,7 @@ class Commander extends EventEmitter {
 
     stdout.write('''
 
-  Usage: ${$name} ${$usage}
+  Usage: ${getName()} ${$usage}
 
     ${$description}
 
