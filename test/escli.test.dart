@@ -256,7 +256,7 @@ void main() {
       program.parseArgv(['list', '-a', '-d', '--abc']);
       expect(callTimes, equals(3));
 
-      expect(program.children, hasLength(2));
+      expect(program.children, hasLength(1));
       expect(hasInvokeListCommand, isTrue);
     }, skip: false);
   }, skip: false);
