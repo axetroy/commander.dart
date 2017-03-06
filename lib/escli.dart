@@ -70,52 +70,13 @@ class Commander extends EventEmitter {
     List<String> commands = name.split(new RegExp(r'\s+')).toList();
     String command = commands.removeAt(0);
 
-    Commander childCommand = new Commander(name: command);
+    Commander childCommand = new Commander(name: name)
+      ..description(description ?? '');
     childCommand.parent = this;
-
     childCommand.cmd = new Command(name, description);
-
-    childCommand
-      ..description(description ?? '')
-      ..parseExpectedArgs(commands);
 
     children[command] = childCommand;
     return childCommand;
-  }
-
-  Commander parseExpectedArgs(List<String> args) {
-    if (args.length == 0) return this;
-    int index = 0;
-    args.forEach((arg) {
-      Map<String, dynamic> model = new Map();
-      model["name"] = "";
-      model["required"] = false;
-      model["variadic"] = false;
-      model["index"] = index;
-
-      switch (arg[0]) {
-        case '<':
-          model["required"] = true;
-          model["name"] = arg.trim().replaceAll(new RegExp(r'^[\s\S]|[\s\S]$'), '');
-          break;
-        case '[':
-          model["name"] = arg.replaceAll(new RegExp(r'^[\s\S]|[\s\S]$'), '');
-          break;
-      }
-
-      final String name = model["name"];
-
-      if (name.length > 3 && name.substring(name.length - 3, name.length) == '...') {
-        model["variadic"] = true;
-        model["name"] = name.substring(name.length - 3, name.length);
-      }
-
-      if (name.isNotEmpty) {
-        models[name] = model;
-      }
-      index++;
-    });
-    return this;
   }
 
   Commander action(void handler(Map argv, Map option)) {
@@ -252,7 +213,6 @@ ${commands.isNotEmpty ? commands : '    can not found a valid command'}
   Options:
 ${optionsStr}
 
-Run ${$name} <command> --help for get more infomation
 ''');
   }
 
