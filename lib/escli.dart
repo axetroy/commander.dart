@@ -8,9 +8,11 @@ import 'package:escli/utils.dart';
 
 class Commander extends EventEmitter {
   String $name = '';
+  String $alias = '';
   String $version = '';
   String $description = '';
   String $usage = '';
+  String $command = '';
 
   List<Option> options = [];
   Map<String, Map> models = new Map();
@@ -72,11 +74,30 @@ class Commander extends EventEmitter {
 
     Commander childCommand = new Commander(name: name)
       ..description(description ?? '');
+    childCommand.$command = name;
     childCommand.parent = this;
     childCommand.cmd = new Command(name, description);
 
     children[command] = childCommand;
     return childCommand;
+  }
+
+  Commander alias(String alias) {
+    if (parent == null) {
+      throw new Exception('Can not defined the alias to root command');
+    }
+
+    String command = $command
+      .split(' ')
+      .first;
+
+    if (command.length < alias.length) {
+      throw new Exception('Alias can not longer then command');
+    }
+
+    $alias = alias;
+
+    return this;
   }
 
   Commander action(void handler(Map argv, Map option)) {
@@ -122,7 +143,7 @@ class Commander extends EventEmitter {
       });
     }
 
-    void optionParse(Commander commander){
+    void optionParse(Commander commander) {
       //  parse options and set the value
       commander.options.forEach((Option option) {
         option.parseArgv(originArguments);
@@ -187,11 +208,12 @@ class Commander extends EventEmitter {
     return root;
   }
 
-  String getName(){
+  String getName() {
     String output = $name;
     Commander current = this;
     while (current.parent != null) {
-      output = current.parent.$name +' ' + output;;
+      output = current.parent.$name + ' ' + output;
+      ;
       current = current.parent;
     }
     return output;
@@ -199,7 +221,11 @@ class Commander extends EventEmitter {
 
   void help() {
     num maxOptionLength = max(options.map((Option op) => op.flags.length).toList());
-    num maxCommandLength = max(children.values.map((Commander command) => command.$name.length).toList());
+    num maxCommandLength = max(children.values.map((Commander command) {
+      String line = (command.$alias.isNotEmpty ? '${command.$alias}|' : '') + command.$name;
+      command.$name = line;
+      return line.length;
+    }).toList());
 
     String commands = children.values.map((Commander command) {
       String margin = repeat(' ', maxCommandLength - command.$name.length + 4);

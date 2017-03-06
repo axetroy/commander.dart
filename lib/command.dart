@@ -3,6 +3,7 @@ import 'package:ee/ee.dart' show EventEmitter;
 class Command extends EventEmitter {
   String cmd;
   String command;
+  String alias;
   String description;
 
 
