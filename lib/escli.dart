@@ -31,7 +31,7 @@ class Commander extends EventEmitter {
     $name = name ?? '';
     this.option('-V, --version', 'print the current version', (bool requireVersion) {
       if (requireVersion == true) {
-        stdout.write($version);
+        stdout.write($version + '\n');
         exit(88);
       }
     });
