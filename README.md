@@ -34,11 +34,9 @@ Enjoy it!
 ```dart
 #!/usr/bin/env dart
 
-import 'package:escli/escli.dart' show Commander;
+import 'package:escli/escli.dart' show program;
 
 void main(List<String> arguments){
-  Commander program = new Commander();
-  
   program
     ..name('test')
     ..version('1.2.0')
@@ -63,10 +61,8 @@ void main(List<String> arguments){
 ### Coercion
 
 ```dart
-import 'package:escli/escli.dart' show Commander;
+import 'package:escli/escli.dart' show program;
 void main(List<String> arguments) {
-  Commander program = new Commander();
-
   parseInt(int n){
     print('--interger: $n');
   }
@@ -96,7 +92,6 @@ void main(List<String> arguments) {
     ..usage('<command> [options]')
     ..option('-i, --integer <n>', 'An integer argument', parseInt)
     ..option('-f, --float <n>', 'A float argument', parseFlow)
-    ..option('-r, --range <a>..<b>', 'A range', range)
     ..option('-l, --list <items>', 'A list', list)
     ..option('-o, --optional [value]', 'An optional value')
     ..option('-c, --collect [value]', 'A repeatable value', collect)
@@ -108,11 +103,9 @@ void main(List<String> arguments) {
 ###  Specify the argument syntax
 
 ```dart
-import 'package:escli/escli.dart' show Commander;
+import 'package:escli/escli.dart' show program;
 
 void main(List<String> arguments){
-  Commander program = new Commander();
-
   program
     ..version('0.0.1')
     ..arguments('<cmd> [env]')
@@ -120,7 +113,6 @@ void main(List<String> arguments){
     print(argv);
     print(options);
   });
-
   program.parseArgv(arguments);
 }
 ```
@@ -128,11 +120,9 @@ void main(List<String> arguments){
 ### Git-style sub-commands (Recommend)
 
 ```dart
-import 'package:escli/escli.dart' show Commander;
+import 'package:escli/escli.dart' show program;
 
 void main(List<String> arguments) {
-  Commander program = new Commander();
-
   program
     ..version('0.0.1');
 
