@@ -157,9 +157,39 @@ void main(List<String> arguments) {
 ```
 
 ### Automated -h, --help
-### Automated -v, --version
-### Automated -dev, --development
 
+```
+$ gpmx -h
+
+  Usage: gpmx <command> [options]
+
+    Git Package Manager, make you manage the repository easier, Power by Dart
+
+  Commands:
+    ls|list              display the all repo.
+    ad|add <repo>        clone repo into local dir.
+    rm|remove            remove a repo.
+    cl|clean             clean the temp/cache.
+    rt|runtime           print the program runtime, useful for submit a issue.
+    rl|relink            relink the base dir which contain repositories if you delete repository manually.
+    ip|import <dir>      register a repository to GPM.
+
+  Options:
+    -V, --version      print the current version
+    -h, --help         print the help info about 
+
+```
+
+### Automated -V, --version
+
+```
+$ gpmx --version
+0.0.1
+```
+
+### Complete Demo
+
+[https://github.com/gpmer/gpm.dart](https://github.com/gpmer/gpm.dart)
 
 ## Test
 ```bash
