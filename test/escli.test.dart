@@ -235,5 +235,29 @@ void main() {
       expect(hasInvokeListCommand, isTrue);
       expect(program.children.keys, hasLength(2));
     }, skip: false);
+
+    test('test command alias name', () {
+      bool hasInvokeListCommand = false;
+      int callTimes = 0;
+      program
+        .command('list', 'display all item')
+        .alias('ls')
+        .action((Map argv, Map options) {
+        hasInvokeListCommand = true;
+        callTimes++;
+      });
+
+      expect(callTimes, equals(0));
+      // [-d] and [--abc] was not defined in program, it should be ignore
+      program.parseArgv(['ls', '-a', '-d', '--abc']);
+      expect(callTimes, equals(1));
+      program.parseArgv(['ls', '-a', '-d', '--abc']);
+      expect(callTimes, equals(2));
+      program.parseArgv(['list', '-a', '-d', '--abc']);
+      expect(callTimes, equals(3));
+
+      expect(program.children, hasLength(2));
+      expect(hasInvokeListCommand, isTrue);
+    }, skip: false);
   }, skip: false);
 }
