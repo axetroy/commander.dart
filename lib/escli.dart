@@ -17,6 +17,7 @@ class Commander extends EventEmitter {
   List<Option> options = [];
   Map<String, Map> models = new Map();
   Map<String, Commander> children = new Map();
+  Map<String, Commander> childrenAlias = new Map();
   Commander parent;
   Command cmd;
 
@@ -97,9 +98,11 @@ class Commander extends EventEmitter {
 
     $alias = alias;
 
-    if (parent.children[alias] == null) {
-      parent.children[alias] = this;
-    } else {
+    if (parent.childrenAlias[alias] == null) {
+      parent.childrenAlias[alias] = this;
+      parent.childrenAlias[command] = this;
+    }
+    else {
       throw new Exception('duplicate declare alias: $alias');
     }
 
@@ -127,7 +130,7 @@ class Commander extends EventEmitter {
 
     String command = arguments.isNotEmpty ? arguments.removeAt(0) : '';
 
-    Commander childCommand = children[command] ?? children[$alias] ?? null;
+    Commander childCommand = children[command] ?? childrenAlias[command] ?? null;
 
     /**
      * parse command
