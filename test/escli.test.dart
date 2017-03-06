@@ -231,6 +231,7 @@ void main() {
       // [-d] and [--abc] was not defined in program, it should be ignore
       program.parseArgv(['list', '-a', '-d', '--abc']);
 
+      expect(program.children, hasLength(2));
       expect(hasInvokeListCommand, isTrue);
       expect(program.children.keys, hasLength(2));
     }, skip: false);
