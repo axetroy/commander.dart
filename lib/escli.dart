@@ -163,8 +163,7 @@ class Commander extends EventEmitter {
             '${option.long} <value> is required field, or you can set it to optional ${option.long} [value]'
           );
         }
-        $option[option.key] = option.value;
-        option.emit('run_handler', option.value);
+        $option[option.key] = option.emit('run_handler', option.value) ?? option.value;
       });
     }
 
@@ -183,7 +182,7 @@ class Commander extends EventEmitter {
       //    argument: add /home/axetroy   # Invalid Command: /home/axetroy
       if (command.isNotEmpty && command.indexOf('-') != 0) {
         Commander root = getRoot();
-        // trigger the global action
+        // trigger the global actionl
         if (root.children.isEmpty && root.haveSetAction == true) {
           root.emit(root.$name);
         }
@@ -192,16 +191,36 @@ class Commander extends EventEmitter {
         }
         else {
           stderr.write('\nInvalid Command: $command\n');
-          this.help();
         }
       }
       else {
+        // empty
         this.emit($name);
       }
     }
     else {
       childCommand.parseArgv(arguments);
     }
+  }
+
+  void $emit(String event, [dynamic data]) {
+    Commander current = this;
+    current.emit(event, data);
+    while (current.parent != null) {
+      current = current.parent;
+      current.emit(event, data);
+    }
+  }
+
+  void $broadcast(String event, [dynamic data]) {
+    var current = this;
+    while (current.children) {
+      for (var name in current.children) {
+        var child = current.children[name];
+        child.$broadcast(event, data);
+      }
+    }
+    this.emit(event, data);
   }
 
   /**
@@ -228,7 +247,7 @@ class Commander extends EventEmitter {
     return output;
   }
 
-  void help() {
+  String get autoHelpInfo {
     num maxOptionLength = max(options.map((Option op) => op.flags.length).toList());
     num maxCommandLength = max(children.values.map((Commander command) {
       String line = (command.$alias.isNotEmpty ? '${command.$alias}|' : '') + command.$name;
@@ -245,20 +264,39 @@ class Commander extends EventEmitter {
       String margin = repeat(' ', maxOptionLength - op.flags.length + 4);
       return '    ${op.flags} ${margin} ${op.description}';
     }).join('\n');
+    return '''
 
-    stdout.write('''
+  Usage: ${getName() ?? 'Invalid name'} ${$usage ?? 'Invalid Usage'}
 
-  Usage: ${getName()} ${$usage}
-
-    ${$description}
+    ${$description ?? 'Not define description yet.'}
 
   Commands:
-${commands.isNotEmpty ? commands : '    can not found a valid command'}
+${commands.isNotEmpty ? commands : '    Can not found a valid command.'}
 
   Options:
-${optionsStr}
+${optionsStr ?? '    Can not found a valid option.'}
 
-''');
+''';
+  }
+
+  /**
+   * Output help information without exiting
+   */
+  void outputHelp(Function cb(dynamic data)) {
+    final raw = this.autoHelpInfo;
+    this.$emit('help', raw);
+    stdout.write(raw);
+    cb(raw);
+  }
+
+  /**
+   * Output help information and exiting
+   */
+  Commander help() {
+    this.outputHelp((raw) {
+      exit(1);
+    });
+    return this;
   }
 
 }
