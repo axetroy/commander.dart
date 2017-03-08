@@ -108,7 +108,7 @@ import 'package:escli/escli.dart' show program;
 void main(List<String> arguments){
   program
     ..version('0.0.1')
-    ..arguments('<cmd> [env]')
+    ..command('<cmd> [env]')
     ..action((Map argv, Map options) {
     print(argv);
     print(options);
