@@ -59,10 +59,13 @@ void main() {
       });
 
       program
-        .command('test command')
+        .command('test_command')
         .action((argv, option) {
         // it won't run this forever, cause
         hasRunCommandAction = true;
+      })
+        .on('--help', (dynamic data) {
+        print('trigger the help');
       });
 
       program.parseArgv(['invalid_command', '--cheese', '--pineapple', '-dev']);
